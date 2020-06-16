@@ -1,0 +1,89 @@
+import { AsyncStorage } from "react-native";
+import { useSelector } from "react-redux";
+
+export const SIGNUP='SIGNUP';
+export const LOGIN='LOGIN';
+export const LOGOUT='LOGOUT';
+export const AUTOLOGIN='AUTOLOGIN';
+export const ISAUTOLOGINENABLED='ISAUTOLOGINENABLED';
+
+export const signUp =  (email, password) => {
+    return async dispatch =>{
+        
+    const response = await fetch('https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=AIzaSyB2hFVZgCoG2c7a7XaBPo-9lizxTRrDXFI',
+        {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(
+                {
+                    email: email,
+                    password: password,
+                    returnSecureToken: true
+                }
+            )
+        });
+        const resData=await response.json();
+
+        if(resData.error){
+                
+            throw resData.error.message 
+        }
+        console.log('User created');
+        
+      
+        
+    }
+}
+export const login =  (email, password) => {
+    return async (dispatch,getState) =>{
+        const isAutoLoginEnabled =getState().auth.isAutoLoginEnabled;
+        console.log(isAutoLoginEnabled);
+        
+    
+    const response = await fetch('https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=AIzaSyB2hFVZgCoG2c7a7XaBPo-9lizxTRrDXFI',
+        {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(
+                {
+                    email: email,
+                    password: password,
+                    returnSecureToken: true
+                }
+            )
+        });
+        const resData=await response.json();
+        
+        if(!response.ok){
+            
+            throw resData.error.message
+            
+        }
+        await AsyncStorage.setItem('userID',resData.localId);
+        dispatch({type:LOGIN,auth:resData.localId})
+       
+
+    
+}}
+
+
+export const logout=()=>{
+    return async dispatch=>{
+        
+        await AsyncStorage.removeItem('userID');
+        dispatch({type:LOGOUT})
+    }
+}
+
+export const autoLogin=(text)=>{
+    
+    return({type:AUTOLOGIN,key:text})
+}
+export const isAutoLoginEnabled=(text)=>{
+    
+    return({type:ISAUTOLOGINENABLED,value:text})
+}

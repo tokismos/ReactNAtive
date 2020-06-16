@@ -1,11 +1,32 @@
-import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import React, { useEffect, useCallback } from 'react';
+import { StyleSheet, Text, View, AsyncStorage } from 'react-native';
+import LoadingScreen from './screens/LoadingScreen'
+import {Provider,useDispatch} from 'react-redux'
+import {createStore,combineReducers,applyMiddleware} from 'redux'
+import ReduxThunk from 'redux-thunk'
+import authReducer from './store/reducers/auth'
+import * as authActions from './store/actions/auth'
+
+import { composeWithDevTools } from 'redux-devtools-extension';
+
+
+
+
+const rootReducer=combineReducers({
+
+    auth:authReducer,
+
+})
+
+const store=createStore(rootReducer,composeWithDevTools(applyMiddleware(ReduxThunk)));
 
 export default function App() {
+ 
+
   return (
-    <View style={styles.container}>
-      <Text>Open up App.js to start working on your app!</Text>
-    </View>
+    <Provider store={store}>
+    <LoadingScreen />
+    </Provider>
   );
 }
 
