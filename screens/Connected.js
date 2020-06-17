@@ -5,7 +5,7 @@ import * as authActions from '../store/actions/auth'
 const Connected = (props) => {
 
     const dispatch = useDispatch();
-    const userID = useSelector(state => state.auth.ID);
+    const userId = useSelector(state => state.auth.ID);
 
     const disconnect = () => {
         console.log('discon');
@@ -25,7 +25,7 @@ const Connected = (props) => {
             <Text>CONNECTEEED!!!</Text>
             <Text>CONNECTEEED!!!</Text>
             <Text>CONNECTEEED!!!</Text>
-            <Text>{userID}</Text>
+            <Text>{userId}</Text>
             <Button title='disconnect' onPress={disconnect} />
         </View>
     )

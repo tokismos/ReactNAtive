@@ -1,4 +1,4 @@
-import { SIGNUP, LOGIN,LOGOUT, AUTOLOGIN,ISAUTOLOGINENABLED } from "../actions/auth"
+import { SIGNUP, LOGIN,LOGOUT, AUTOLOGIN, IS_AUTO_LOGIN_ENABLED } from "../actions/auth"
 
 
 const initialState={
@@ -35,13 +35,12 @@ export default (state=initialState,action)=>{
                 ID:action.key,
                 isLoged:true
             }
-            case ISAUTOLOGINENABLED:
-                return{
-                    ...initialState,
-                    isAutoLoginEnabled:action.value
 
-                }
-
+        case IS_AUTO_LOGIN_ENABLED:
+            return{
+                ...initialState,
+                isAutoLoginEnabled:action.value
+            }
             default:
                 return state
     }

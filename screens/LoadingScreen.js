@@ -4,32 +4,31 @@ import { MainNavigator, ConnectedNavigator } from '../navigation/Navigator'
 import { useSelector, useDispatch } from 'react-redux';
 import * as authActions from '../store/actions/auth'
 
-const LoadingScreen = () => {
+const LoadingScreen = (props) => {
     const dispatch = useDispatch();
     const [isLoading, setIsLoading] = useState(true);
     let isLoged = useSelector(state => state.auth.isLoged);
-    let isAutoLoginEnabled = useSelector(state => state.auth.isAutoLoginEnabled);
-    //console.log('is auto',isAutoLoginEnabled);
-    
 
     const getKeyfromStorage = async () => {
         const key = await AsyncStorage.getItem('userID');
-        
-        if (key) {
+        if(key){
+            
             dispatch(authActions.autoLogin(key));
         }
+
     }
-    getKeyfromStorage();
+        getKeyfromStorage();
+    
 
     setTimeout(() => {
         setIsLoading(false);
-    },500);
+    }, 500);
+
 
     return (
 
         !isLoading ? (isLoged ? <ConnectedNavigator /> : <MainNavigator />) : (<ActivityIndicator style={styles.loading} size='large' />)
-
-
+        
 
     )
 }
@@ -37,9 +36,9 @@ const LoadingScreen = () => {
 export default LoadingScreen
 
 const styles = StyleSheet.create({
-    loading:{
-        flex:1,
-        justifyContent:'center',
-        alignItems:'center'
+    loading: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center'
     }
 })

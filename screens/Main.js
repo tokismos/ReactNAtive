@@ -1,32 +1,29 @@
 import React, { useState, useEffect } from 'react'
-import { StyleSheet, Text, View, Button, Alert,Switch } from 'react-native'
+import { StyleSheet, Text, View, Button, Alert, Switch, ActivityIndicator } from 'react-native'
 import { TextInput } from 'react-native-gesture-handler';
 import { useSelector, useDispatch } from 'react-redux';
 import * as authActions from '../store/actions/auth'
 
 const Main = (props) => {
     const [email, setEmail] = useState('hello@gmail.com');
+    const [isLoading, setIsLoading] = useState(false);
     const [password, setPassword] = useState('qwertyu');
     const dispatch = useDispatch();
-    const [isEnabled,setIsEnabled]=useState(false);
+    //let isAutoLoginEnabled = useSelector(state => state.auth.isAutoLoginEnabled);
 
-    const toggleSwitch= ()=>
-    {
-         setIsEnabled(state=>!state);
-         
+    const [isEnabled, setIsEnabled] = useState(false);
+
+    const toggleSwitch = () => {
+        setIsEnabled(state => !state);
     }
-    useEffect(()=>{
-        console.log('first render ever');
-        
-        dispatch(authActions.isAutoLoginEnabled(isEnabled))
-             console.log(isEnabled)
-    },[isEnabled]);
 
+    useEffect(() => {
+        dispatch(authActions.isAutoLoginEnabled(isEnabled));
+    }, [isEnabled])
 
 
     const signUp = async (email, password) => {
         try {
-
 
             await dispatch(authActions.signUp(email, password));
 
@@ -37,13 +34,17 @@ const Main = (props) => {
     }
     const login = async (email, password) => {
         try {
+            setIsLoading(true);
             console.log('Connecting....');
 
+
             await dispatch(authActions.login(email, password));
+
             console.log('Connected!');
 
         } catch (err) {
-            Alert.alert('Connexion impossible', err, [{ text: 'okkay' }])
+            Alert.alert('Connexion impossible', err, [{ text: 'okkay' }]);
+            setIsLoading(false);
         }
     };
     return (
@@ -65,7 +66,7 @@ const Main = (props) => {
                         value={isEnabled}
                     />
                 </View>
-                <Button title='Login' onPress={() => login(email, password)} />
+                {isLoading ? <ActivityIndicator size='large' /> : <Button title='Login' onPress={() => login(email, password)} />}
             </View>
         </View>
     )
@@ -83,12 +84,12 @@ const styles = StyleSheet.create({
         padding: 10,
         borderWidth: 1
     },
-    switchContainer:{
-        flexDirection:'row',
-        justifyContent:'space-between',
-        width:'80%'
-        
-    
+    switchContainer: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        width: '80%'
+
+
     }
 });
 export default Main
