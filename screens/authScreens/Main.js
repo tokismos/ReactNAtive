@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { StyleSheet, Text, View, Button, Alert, Switch, ActivityIndicator } from 'react-native'
 import { TextInput } from 'react-native-gesture-handler';
 import { useSelector, useDispatch } from 'react-redux';
-import * as authActions from '../store/actions/auth'
+import * as authActions from '../../store/actions/auth'
 
 const Main = (props) => {
     const [email, setEmail] = useState('hello@gmail.com');
@@ -12,7 +12,7 @@ const Main = (props) => {
     //let isAutoLoginEnabled = useSelector(state => state.auth.isAutoLoginEnabled);
 
     const [isEnabled, setIsEnabled] = useState(false);
-
+        
     const toggleSwitch = () => {
         setIsEnabled(state => !state);
     }

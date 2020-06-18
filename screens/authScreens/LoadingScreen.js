@@ -1,8 +1,8 @@
 import React, { useEffect, useState, useCallback } from 'react'
 import { StyleSheet, Text, View, AsyncStorage, ActivityIndicator } from 'react-native'
-import { MainNavigator, ConnectedNavigator } from '../navigation/Navigator'
+import { MainNavigator, ConnectedNavigator, TabNavigator } from '../../navigation/Navigator'
 import { useSelector, useDispatch } from 'react-redux';
-import * as authActions from '../store/actions/auth'
+import * as authActions from '../../store/actions/auth'
 
 const LoadingScreen = (props) => {
     const dispatch = useDispatch();
@@ -17,7 +17,9 @@ const LoadingScreen = (props) => {
         }
 
     }
+       useEffect(()=>{
         getKeyfromStorage();
+    }) 
     
 
     setTimeout(() => {
@@ -27,7 +29,7 @@ const LoadingScreen = (props) => {
 
     return (
 
-        !isLoading ? (isLoged ? <ConnectedNavigator /> : <MainNavigator />) : (<ActivityIndicator style={styles.loading} size='large' />)
+        !isLoading ? (isLoged ? <TabNavigator /> : <MainNavigator />) : (<ActivityIndicator style={styles.loading} size='large' />)
         
 
     )

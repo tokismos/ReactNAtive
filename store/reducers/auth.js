@@ -20,7 +20,6 @@ export default (state=initialState,action)=>{
         
         case LOGIN:
             return {
-                ...initialState,
                 ID:action.auth,
                 isLoged:true
                 
