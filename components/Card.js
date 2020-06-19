@@ -1,7 +1,15 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import { StyleSheet, Text, View } from 'react-native'
+import moment from 'moment';
+import localization from 'moment/locale/fr';
+import {getFormatedTime} from '../helpers/time';
+
+
+moment.locale('fr', localization);
 
 const Card = (props) => {
+
+
     return (
         <View style={styles.screenContainer}>
             <View>
@@ -9,7 +17,10 @@ const Card = (props) => {
                 </View>
 
             <View style={styles.descriptionContainer}>
+                <View>
                 <Text>Adresse: {props.adresse}</Text>
+                <Text>{getFormatedTime(props.time)}</Text>
+                </View>
                 <Text style={styles.prix}>Prix {props.prix}</Text>
             </View>
         </View>

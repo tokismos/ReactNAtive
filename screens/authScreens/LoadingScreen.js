@@ -19,7 +19,7 @@ const LoadingScreen = (props) => {
     }
        useEffect(()=>{
         getKeyfromStorage();
-    }) 
+    },[]) 
     
 
     setTimeout(() => {

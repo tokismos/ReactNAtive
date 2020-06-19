@@ -3,6 +3,10 @@ import { StyleSheet, Text, View, FlatList, ActivityIndicator, RefreshControl } f
 import { useSelector, useDispatch } from 'react-redux'
 import Card from '../../components/Card'
 import * as itemsActions from '../../store/actions/items'
+import dateFormat from 'dateformat';
+
+
+
 
 const ListScreen = () => {
     const dispatch = useDispatch();
@@ -26,6 +30,8 @@ const ListScreen = () => {
         loadItems();
     }, [])
 
+   
+
 
     return (
         <View style={{ flex: 1 }}>
@@ -44,8 +50,11 @@ const ListScreen = () => {
                     renderItem={({ item }) =>
                         <Card title={item.ville}
                             adresse={item.adresse}
-                            prix={item.prix} />} />}
-            <Text>ok</Text>
+                            time={item.time}
+                    prix={item.prix} />} />
+                    
+       
+                    }
         </View>
     )
 }

@@ -7,18 +7,7 @@ const initialState={
 
 export default(state=initialState,action)=>{
     switch(action.type){
-        case ADD_ITEM:
-
-        const maison=new Maison(
-            action.item.itemId,
-            action.item.ville,
-            action.item.adresse,
-            action.item.image,
-            action.item.prix,
-        );
-        return {
-            items:[...state.items,maison]
-        } 
+      
 
         case FETCH_ITEMS:
             
