@@ -11,13 +11,7 @@ const initialState={
 
 export default (state=initialState,action)=>{
     switch (action.type){
-        case SIGNUP:
-
-            return {
-                ...initialState,
-                ID:action.auth
-            }
-        
+                
         case LOGIN:
             return {
                 ID:action.auth,

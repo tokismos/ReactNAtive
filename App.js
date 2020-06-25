@@ -1,17 +1,15 @@
-import React, { useEffect, useCallback } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import React, { useEffect } from 'react';
 import LoadingScreen from './screens/authScreens/LoadingScreen'
-import { Provider, useDispatch } from 'react-redux'
+import { Provider } from 'react-redux'
 import { createStore, combineReducers, applyMiddleware } from 'redux'
 import ReduxThunk from 'redux-thunk'
 import authReducer from './store/reducers/auth'
 import items from './store/reducers/items'
-import * as authActions from './store/actions/auth'
-import { persistStore, persistReducer } from 'redux-persist'
-import AsyncStorage from '@react-native-community/async-storage';
-import { PersistGate } from 'redux-persist/integration/react'
-
+import consts from './consts/consts';
+import * as firebase from 'firebase'
 import { composeWithDevTools } from 'redux-devtools-extension';
+import { fire } from './helpers/fire';
+
 
 /*const persistConfig = {
   key: 'root',
@@ -19,7 +17,8 @@ import { composeWithDevTools } from 'redux-devtools-extension';
 }*/
 
 
-//console.disableYellowBox = true;
+
+console.disableYellowBox = true;
 
 
 const rootReducer = combineReducers({
@@ -34,6 +33,14 @@ const store = createStore(rootReducer, composeWithDevTools(applyMiddleware(Redux
 //const persistor = persistStore(store);
 export default function App() {
 
+  useEffect(() => {
+    
+    if (!firebase.apps.length) {
+      firebase.initializeApp(consts.conf);}
+
+      
+
+    }, [])
 
   return (
     <Provider store={store}>
@@ -42,11 +49,3 @@ export default function App() {
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});

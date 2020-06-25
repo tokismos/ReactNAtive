@@ -2,14 +2,20 @@ import React, { useEffect, useState } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import { StyleSheet, Text, View, AsyncStorage, Button } from 'react-native'
 import * as authActions from '../../store/actions/auth'
+import * as firebase from 'firebase'
 const Connected = (props) => {
 
     const dispatch = useDispatch();
     const userId = useSelector(state => state.auth.ID);
 
     const disconnect = () => {
-        console.log('discon');
-        dispatch(authActions.logout());
+        firebase.auth()
+        .signOut()
+        .then(() => {
+            console.log('User signed out!');
+
+        dispatch(authActions.logout())}
+        );
     }
 
     const Add=()=>{

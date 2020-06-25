@@ -5,9 +5,11 @@ export const LOGIN = 'LOGIN';
 export const LOGOUT = 'LOGOUT';
 export const AUTOLOGIN = 'AUTOLOGIN';
 export const IS_AUTO_LOGIN_ENABLED = 'IS_AUTO_LOGIN_ENABLED';
-import consts from '../../API/const'
+import consts from '../../consts/consts'
 
-export const signUp = (email, password) => {
+
+
+/* export const signUp = (email, password) => {
     return async dispatch => {
 
         const response = await fetch(`https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=${consts.googleApi}`,
@@ -35,12 +37,11 @@ export const signUp = (email, password) => {
 
 
     }
-}
-export const login = (email, password) => {
+} */
+export const login = (uid) => {
     return async (dispatch, getState) => {
         const isAutoLoginEnabled = getState().auth.isAutoLoginEnabled;
-        console.log('autolog', isAutoLoginEnabled);
-
+/* 
         const response = await fetch(`https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=${consts.googleApi}`,
             {
                 method: 'POST',
@@ -62,10 +63,10 @@ export const login = (email, password) => {
             throw resData.error.message
 
         }
-        if (isAutoLoginEnabled) {
-            await AsyncStorage.setItem('userID', resData.localId);
+ */        if (isAutoLoginEnabled) {
+            await AsyncStorage.setItem('userID', uid);
         }
-        dispatch({ type: LOGIN, auth: resData.localId })
+        dispatch({ type: LOGIN, auth: uid })
 
 
 

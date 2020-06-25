@@ -3,16 +3,18 @@ import { StyleSheet, Text, View, Button, Alert, Switch, ActivityIndicator } from
 import { TextInput } from 'react-native-gesture-handler';
 import { useSelector, useDispatch } from 'react-redux';
 import * as authActions from '../../store/actions/auth'
+import * as firebase from 'firebase';
 
 const Main = (props) => {
     const [email, setEmail] = useState('hello@gmail.com');
     const [isLoading, setIsLoading] = useState(false);
+    const [isLoadingSIGNUP, setIsLoadingSIGNUP] = useState(false);
     const [password, setPassword] = useState('qwertyu');
     const dispatch = useDispatch();
     //let isAutoLoginEnabled = useSelector(state => state.auth.isAutoLoginEnabled);
 
     const [isEnabled, setIsEnabled] = useState(false);
-        
+
     const toggleSwitch = () => {
         setIsEnabled(state => !state);
     }
@@ -22,37 +24,44 @@ const Main = (props) => {
     }, [isEnabled])
 
 
-    const signUp = async (email, password) => {
-        try {
+    const signUp = (email, password) => {
+        setIsLoadingSIGNUP(true);
 
-            await dispatch(authActions.signUp(email, password));
+        firebase.auth()
+            .createUserWithEmailAndPassword(email, password)
+            .then(() => {
 
-        } catch (err) {
-            Alert.alert('ERREUR', err, [{ text: 'okkay' }])
-        }
+                console.log('User account created');
+                setIsLoadingSIGNUP(false);
+            })
+            .catch(err => {
+                Alert.alert('Error', err.message, [{ text: 'Okkay' }])
+                setIsLoadingSIGNUP(false);
+
+            });
 
     }
-    const login = async (email, password) => {
-        try {
-            setIsLoading(true);
-            console.log('Connecting....');
+    const login = (email, password) => {
+        setIsLoading(true);
+        firebase.auth()
+            .signInWithEmailAndPassword(email, password)
+            .then((data) => {
+                dispatch(authActions.login(data.user.uid))
+
+            }).catch((err) => {
+                setIsLoading(false)
+                Alert.alert('Error', err.message, [{ text: 'Okkay' }])
+            }
+            )
 
 
-            await dispatch(authActions.login(email, password));
-
-            console.log('Connected!');
-
-        } catch (err) {
-            Alert.alert('Connexion impossible', err, [{ text: 'okkay' }]);
-            setIsLoading(false);
-        }
     };
     return (
         <View style={{ flex: 1 }}>
             <View style={styles.container}>
                 <TextInput style={styles.textInput} value={email} onChangeText={(text) => setEmail(text)} />
                 <TextInput style={styles.textInput} secureTextEntry value={password} onChangeText={(text) => setPassword(text)} />
-                <Button title='SignUp' onPress={() => signUp(email, password)} />
+                {isLoadingSIGNUP ? <ActivityIndicator size='large' /> :<Button title='SignUp' onPress={() => signUp(email, password)} />}
             </View>
             <View style={styles.container}>
                 <TextInput style={styles.textInput} value={email} />

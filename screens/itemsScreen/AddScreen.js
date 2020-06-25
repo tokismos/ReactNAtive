@@ -1,22 +1,52 @@
-import React, { useState } from 'react'
-import { StyleSheet, Text, View, Button, Keyboard, KeyboardAvoidingView } from 'react-native'
+import React, { useState, useEffect } from 'react'
+import { StyleSheet, Text, View, Button, Keyboard, KeyboardAvoidingView, Alert } from 'react-native'
 import { TextInput, ScrollView } from 'react-native-gesture-handler'
 import * as itemsActions from '../../store/actions/items'
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
+import * as firebase from 'firebase'
+import 'firebase/firestore';
+import { getTime } from '../../helpers/time'
+import MapPreview from '../../components/MapPreview'
 
-const AddScreen = () => {
+const AddScreen = (props) => {
+    const ID = useSelector(state => state.auth.ID);
+
     const [ville, setVille] = useState('Fes');
     const [adresse, setAdresse] = useState('Hay Azhar');
     const [image, setImage] = useState('http.//image.com');
     const [prix, setPrix] = useState('560 DH');
+    const location = props.route.params?.location;
 
-    const dispatch=useDispatch();
+    console.log('looc', location);
 
-    const add = () => {
-        dispatch(itemsActions.addItem(ville,adresse,image,prix));
-        console.log('dispatch succesful');
-        
+
+    const add = async (ville, adresse, image, prix,location) => {
+
+        const time = await getTime();
+        await firebase.firestore()
+            .collection(`items`).add({
+                ville,
+                ownerID: ID,
+                adresse,
+                image,
+                prix,
+                time,
+                location
+            }).then((data) => {
+
+                Alert.alert('Success', `User Added :${data.id}`, [{ text: 'Okkay' }])
+            });
+
+
+
+
     }
+const pressImageHandler=()=>{
+
+    props.navigation.navigate('Map',{location})
+
+}
+
     return (
         <KeyboardAvoidingView
 
@@ -32,8 +62,16 @@ const AddScreen = () => {
                     <View style={styles.inputText}><TextInput value={image} onChangeText={(text) => { setImage(text) }} /></View>
                     <Text style={styles.text}>Prix</Text>
                     <View style={styles.inputText}><TextInput value={prix} onChangeText={(text) => { setPrix(text) }} /></View>
+                    <View style={styles.container}>
+                        <MapPreview location={location} onPress={pressImageHandler}>
+                          <View style={{alignItems:'center'}}><Text >No location choosed..</Text></View>
+                        </MapPreview>
+                    </View>
+                    {location ? <Text>Vos coordonnées :{location.latitude}////{location.longitude}</Text> :<Text>there s nothing</Text>}
                     <View style={styles.button}>
-                        <Button title='ADD' onPress={add} />
+                        <Button title='ADD' onPress={add.bind(this, ville, adresse, image, prix,location)} />
+                        <Button title='Choose location' onPress={() => { props.navigation.navigate('Map') }} />
+
                     </View>
 
                 </View>
@@ -54,6 +92,13 @@ const styles = StyleSheet.create({
     screen: {
         justifyContent: 'center',
         flex: 1
+    },
+    container: {
+        borderWidth: 1,
+        borderColor: '#ccc',
+        width: '100%',
+        marginVertical: 10,
+        justifyContent: 'center',
     },
     screenContainer: {
         borderWidth: 1,

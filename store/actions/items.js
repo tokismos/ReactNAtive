@@ -1,18 +1,36 @@
 import Maison from "../../models/maison";
-
+import * as firebase from 'firebase'
 export const ADD_ITEM = 'ADD_item';
 export const FETCH_ITEMS = 'FETCH_ITEMS';
-import {getTime} from '../../helpers/time'
+import { getTime } from '../../helpers/time'
+import { useState } from "react";
+import 'firebase/firestore';
+import { Alert } from "react-native";
 
 export const addItem = (ville, adresse, image, prix) => {
     return async (dispatch, getState) => {
         const ID = getState().auth.ID;
         console.log(ID);
+        const time = await getTime();
 
-            const time=await getTime();
-            
+        await firebase.firestore()
+            .collection(`items`)
+            .add({
+                ville,
+                ownerID: ID,
+                adresse,
+                image,
+                prix,
+                time
+            })
+            .then((data) => {
 
-        const response = await fetch(`https://reacttest-ed503.firebaseio.com/items/${ID}.json`, {
+                Alert.alert('Success', `User Added :${data.id}`, [{ text: 'Okkay' }])
+            });
+
+
+
+        /* const response = await fetch(`https://reacttest-ed503.firebaseio.com/items/${ID}.json`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -27,55 +45,75 @@ export const addItem = (ville, adresse, image, prix) => {
             })
         }
         );
-        const resData = await response.json();
-
-        if (!response.ok) {
-            throw resData.error.message
-        }
-        console.log('item added');
+        const resData = await response.json(); */
 
 
-   
+
+
+
     }
 
 }
 export const fetchMaisons = () => {
     return async (dispatch, getState) => {
-        const userId = getState().auth.ID;
-        console.log(userId);
+        let loadedMaisons = [];
+        const ID = getState().auth.ID;
 
-        const response = await fetch(
-            `https://reacttest-ed503.firebaseio.com/items/.json`
-        );
+        await firebase.firestore()
+            .collection('items').orderBy("time", "desc").get()
+            .then(querySnapshot => {
+                console.log('Total users: ', querySnapshot.size);
 
-        if (!response.ok) {
+                querySnapshot.forEach(documentSnapshot => {
 
-            throw new Error('Something went wrong');
+                    loadedMaisons.push(new Maison(
+                        documentSnapshot.id,
+                        ID,
+                        documentSnapshot.data().ville,
+                        documentSnapshot.data().adresse,
+                        documentSnapshot.data().image,
+                        documentSnapshot.data().prix,
+                        documentSnapshot.data().time
+                    ));
+
+                });
+                console.log('User ID: ', loadedMaisons);
+            });
 
 
-        }
+        dispatch({ type: FETCH_ITEMS, items: loadedMaisons });
+    }
 
-        const resData = await response.json();
-        const loadedMaisons = [];
+    
+};
+export const fetchMaisonsWithVilles = (ville) => {
+    return async (dispatch, getState) => {
+        let loadedMaisons = [];
+        const ID = getState().auth.ID;
+
+        await firebase.firestore()
+            .collection('items').where("ville", "==", ville).orderBy("time", "desc").get()
+            .then(querySnapshot => {
+                console.log('Total users: ', querySnapshot.size);
+
+                querySnapshot.forEach(documentSnapshot => {
+
+                    loadedMaisons.push(new Maison(
+                        documentSnapshot.id,
+                        ID,
+                        documentSnapshot.data().ville,
+                        documentSnapshot.data().adresse,
+                        documentSnapshot.data().image,
+                        documentSnapshot.data().prix,
+                        documentSnapshot.data().time
+                    ));
+
+                });
+                console.log('User ID: ', loadedMaisons);
+            });
 
 
-
-        for (const key in resData) {
-            for (const keyy in resData[key]) {
-
-                loadedMaisons.push(new Maison(
-                    keyy,
-                    resData[key][keyy].ville,
-                    resData[key][keyy].adresse,
-                    resData[key][keyy].image,
-                    resData[key][keyy].prix,
-                    resData[key][keyy].time
-                ))
-
-            }
-           
-        }
-        dispatch({ type: FETCH_ITEMS, items: loadedMaisons.sort((a,b) =>b.time - a.time) });
+        dispatch({ type: FETCH_ITEMS, items: loadedMaisons });
     }
 
 

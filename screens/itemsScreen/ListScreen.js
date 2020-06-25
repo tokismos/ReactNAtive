@@ -4,7 +4,7 @@ import { useSelector, useDispatch } from 'react-redux'
 import Card from '../../components/Card'
 import * as itemsActions from '../../store/actions/items'
 import dateFormat from 'dateformat';
-
+import * as firebase from 'firebase'
 
 
 
@@ -13,11 +13,14 @@ const ListScreen = () => {
     const data = useSelector(state => state.items.items);
     const [isLoading, setIsLoading] = useState(false);
     const [isRefreshing, setIsRefreshing] = useState(false);
+    const [load, setLoad] = useState();
+
 
 
     const loadItems=async()=>{
 
         setIsRefreshing(true);
+        //await dispatch(itemsActions.fetchMaisonsWithVilles('Fes'));
         await dispatch(itemsActions.fetchMaisons());
         setIsLoading(false);
         setIsRefreshing(false);
